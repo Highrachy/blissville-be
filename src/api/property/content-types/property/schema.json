@@ -1,0 +1,95 @@
+{
+  "kind": "collectionType",
+  "collectionName": "properties",
+  "info": {
+    "singularName": "property",
+    "pluralName": "properties",
+    "displayName": "property",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "default": "Generated automatically based on the name"
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "image": {
+      "type": "string"
+    },
+    "size": {
+      "type": "integer",
+      "default": 0
+    },
+    "totalUnits": {
+      "type": "integer",
+      "default": 0
+    },
+    "availableUnits": {
+      "type": "integer",
+      "default": 0
+    },
+    "baths": {
+      "type": "integer",
+      "default": 0
+    },
+    "beds": {
+      "type": "integer",
+      "default": 0
+    },
+    "toilets": {
+      "type": "integer",
+      "default": 0
+    },
+    "floors": {
+      "type": "string",
+      "default": "Ground floor"
+    },
+    "parkingSpace": {
+      "type": "integer",
+      "default": 0
+    },
+    "price": {
+      "type": "integer",
+      "default": 0
+    },
+    "standardPrice": {
+      "type": "integer",
+      "default": 0
+    },
+    "supremePrice": {
+      "type": "integer",
+      "default": 0
+    },
+    "floorPlan1": {
+      "type": "string"
+    },
+    "floorPlan2": {
+      "type": "string"
+    },
+    "floorPlan3": {
+      "type": "string"
+    },
+    "floorPlan4": {
+      "type": "string"
+    },
+    "status": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

@@ -4,7 +4,8 @@
   "info": {
     "singularName": "project",
     "pluralName": "projects",
-    "displayName": "Project"
+    "displayName": "Project",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -14,6 +15,62 @@
     "name": {
       "type": "string",
       "required": true
+    },
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "default": "Generated automatically based on the name"
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "image": {
+      "type": "string"
+    },
+    "street1": {
+      "type": "text",
+      "required": true
+    },
+    "street2": {
+      "type": "text"
+    },
+    "city": {
+      "type": "text",
+      "required": true
+    },
+    "state": {
+      "type": "text",
+      "required": true
+    },
+    "features": {
+      "type": "text",
+      "required": true
+    },
+    "standardFeatures": {
+      "type": "text"
+    },
+    "supremeFeatures": {
+      "type": "text"
+    },
+    "paymentPlan": {
+      "type": "integer",
+      "default": 0
+    },
+    "startDate": {
+      "type": "date",
+      "required": true
+    },
+    "delivery": {
+      "type": "date",
+      "required": true
+    },
+    "status": {
+      "type": "integer",
+      "default": 0
     }
   }
 }
