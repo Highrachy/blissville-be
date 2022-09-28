@@ -71,6 +71,12 @@
     "status": {
       "type": "integer",
       "default": 0
+    },
+    "properties": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::property.property",
+      "mappedBy": "project"
     }
   }
 }
