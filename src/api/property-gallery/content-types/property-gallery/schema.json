@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "property_galleries",
+  "info": {
+    "singularName": "property-gallery",
+    "pluralName": "property-galleries",
+    "displayName": "PropertyGallery",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "image": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "property": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::property.property",
+      "inversedBy": "property_galleries"
+    }
+  }
+}

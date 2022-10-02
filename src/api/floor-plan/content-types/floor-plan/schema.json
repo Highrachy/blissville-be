@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "floor_plans",
+  "info": {
+    "singularName": "floor-plan",
+    "pluralName": "floor-plans",
+    "displayName": "Floor Plan",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "image": {
+      "type": "string",
+      "required": true
+    },
+    "property": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::property.property",
+      "inversedBy": "floor_plans"
+    }
+  }
+}

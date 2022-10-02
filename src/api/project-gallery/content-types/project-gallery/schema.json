@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "project_galleries",
+  "info": {
+    "singularName": "project-gallery",
+    "pluralName": "project-galleries",
+    "displayName": "ProjectGallery"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "image": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "inversedBy": "project_galleries"
+    }
+  }
+}

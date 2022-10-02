@@ -77,6 +77,24 @@
       "relation": "oneToMany",
       "target": "api::property.property",
       "mappedBy": "project"
+    },
+    "neighborhoods": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::neighborhood.neighborhood",
+      "mappedBy": "project"
+    },
+    "faqs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::faq.faq",
+      "mappedBy": "project"
+    },
+    "project_galleries": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::project-gallery.project-gallery",
+      "mappedBy": "project"
     }
   }
 }

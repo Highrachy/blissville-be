@@ -64,28 +64,16 @@
       "default": 0
     },
     "price": {
-      "type": "integer",
+      "type": "biginteger",
       "default": 0
     },
     "standardPrice": {
-      "type": "integer",
+      "type": "biginteger",
       "default": 0
     },
     "supremePrice": {
-      "type": "integer",
+      "type": "biginteger",
       "default": 0
-    },
-    "floorPlan1": {
-      "type": "string"
-    },
-    "floorPlan2": {
-      "type": "string"
-    },
-    "floorPlan3": {
-      "type": "string"
-    },
-    "floorPlan4": {
-      "type": "string"
     },
     "status": {
       "type": "integer",
@@ -96,6 +84,25 @@
       "relation": "manyToOne",
       "target": "api::project.project",
       "inversedBy": "properties"
+    },
+    "initialPayment": {
+      "type": "biginteger"
+    },
+    "paymentPlan": {
+      "type": "integer",
+      "default": 0
+    },
+    "property_galleries": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::property-gallery.property-gallery",
+      "mappedBy": "property"
+    },
+    "floor_plans": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::floor-plan.floor-plan",
+      "mappedBy": "property"
     }
   }
 }
