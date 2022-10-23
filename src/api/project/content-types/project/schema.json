@@ -46,6 +46,13 @@
       "type": "text",
       "required": true
     },
+    "slogan": {
+      "type": "text"
+    },
+    "startingPrice": {
+      "type": "biginteger",
+      "default": 0
+    },
     "features": {
       "type": "text",
       "required": true
@@ -71,6 +78,10 @@
     "status": {
       "type": "integer",
       "default": 0
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
     },
     "properties": {
       "type": "relation",

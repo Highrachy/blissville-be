@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "visitations",
+  "info": {
+    "singularName": "visitation",
+    "pluralName": "visitations",
+    "displayName": "Visitation",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "phone": {
+      "type": "string",
+      "required": true
+    },
+    "visitDate": {
+      "type": "date"
+    },
+    "visiting": {
+      "type": "string",
+      "default": "General Visitation"
+    },
+    "status": {
+      "type": "string",
+      "default": "0"
+    }
+  }
+}

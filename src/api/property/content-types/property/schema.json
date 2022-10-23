@@ -88,9 +88,20 @@
     "initialPayment": {
       "type": "biginteger"
     },
+    "standardInitialPayment": {
+      "type": "biginteger",
+      "default": 0
+    },
+    "supremeInitialPayment": {
+      "type": "biginteger",
+      "default": 0
+    },
     "paymentPlan": {
       "type": "integer",
       "default": 0
+    },
+    "paymentPlanIncrement": {
+      "type": "integer"
     },
     "property_galleries": {
       "type": "relation",
@@ -102,6 +113,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::floor-plan.floor-plan",
+      "mappedBy": "property"
+    },
+    "interests": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::interest.interest",
       "mappedBy": "property"
     }
   }
