@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 /**
  * interest router
  */
 
-const { createCoreRouter } = require('@strapi/strapi').factories;
+const { createCoreRouter } = require("@strapi/strapi").factories;
 
-module.exports = createCoreRouter('api::interest.interest');
+module.exports = createCoreRouter("api::interest.interest");

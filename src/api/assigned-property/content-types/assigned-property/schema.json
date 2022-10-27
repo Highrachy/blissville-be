@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "assigned_properties",
+  "info": {
+    "singularName": "assigned-property",
+    "pluralName": "assigned-properties",
+    "displayName": "Assigned Property",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "assigned_properties"
+    },
+    "property": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::property.property"
+    },
+    "price": {
+      "type": "biginteger",
+      "required": true,
+      "default": "0"
+    },
+    "paymentPlan": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "initialPayment": {
+      "type": "biginteger",
+      "required": true,
+      "default": "0"
+    },
+    "paymentStartDate": {
+      "type": "date",
+      "required": true
+    },
+    "package": {
+      "type": "string",
+      "required": false
+    },
+    "status": {
+      "type": "string",
+      "default": "0"
+    }
+  }
+}

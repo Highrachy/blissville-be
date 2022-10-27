@@ -44,6 +44,10 @@
       "type": "biginteger",
       "default": 0
     },
+    "package": {
+      "type": "string",
+      "required": true
+    },
     "paymentStartDate": {
       "type": "date"
     },
