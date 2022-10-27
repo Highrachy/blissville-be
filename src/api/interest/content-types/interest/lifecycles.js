@@ -4,8 +4,13 @@ const STATUS = {
   ASSIGNED: 2,
 };
 
+const { v4: uuidv4 } = require("uuid");
+
 module.exports = {
   async afterUpdate({ result }) {
+    const randomText = uuidv4();
+    const token = randomText.slice(0, -6);
+    const password = randomText.slice(-8);
     if (result.status === STATUS.ASSIGNED) {
       const interestInfo = await strapi.entityService.findOne(
         "api::interest.interest",
@@ -43,11 +48,12 @@ module.exports = {
               email: result.email,
               username: result.email,
               phone: result.phone,
-              password: "123456",
+              password,
               provider: "local",
-              confirmed: false, // set to true for set password
+              confirmed: false,
               role: 1,
               setPassword: true,
+              token,
             },
           }
         );

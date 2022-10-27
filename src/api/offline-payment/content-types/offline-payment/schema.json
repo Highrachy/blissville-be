@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "offline_payments",
+  "info": {
+    "singularName": "offline-payment",
+    "pluralName": "offline-payments",
+    "displayName": "Offline Payment",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "amount": {
+      "type": "biginteger",
+      "required": true
+    },
+    "bank": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "paymentDate": {
+      "type": "date"
+    },
+    "evidence": {
+      "type": "string"
+    },
+    "assignedProperty": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::assigned-property.assigned-property",
+      "inversedBy": "offlinePayments"
+    },
+    "status": {
+      "type": "integer",
+      "default": 0
+    },
+    "resolvedBy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

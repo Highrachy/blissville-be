@@ -79,12 +79,6 @@
     "phone": {
       "type": "string"
     },
-    "assigned_properties": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::assigned-property.assigned-property",
-      "mappedBy": "users_permissions_user"
-    },
     "setPassword": {
       "type": "boolean",
       "default": false
@@ -96,6 +90,25 @@
       "type": "integer",
       "default": 0,
       "required": false
+    },
+    "referralCode": {
+      "type": "string",
+      "unique": true
+    },
+    "profileImage": {
+      "type": "string"
+    },
+    "assignedProperties": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::assigned-property.assigned-property",
+      "mappedBy": "user"
+    },
+    "referrals": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::referral.referral",
+      "mappedBy": "referredUser"
     }
   }
 }

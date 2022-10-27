@@ -12,12 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "users_permissions_user": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "assigned_properties"
-    },
     "property": {
       "type": "relation",
       "relation": "oneToOne",
@@ -49,6 +43,24 @@
     "status": {
       "type": "string",
       "default": "0"
+    },
+    "offlinePayments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::offline-payment.offline-payment",
+      "mappedBy": "assignedProperty"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "assignedProperties"
+    },
+    "transactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::transaction.transaction",
+      "mappedBy": "assignedProperty"
     }
   }
 }

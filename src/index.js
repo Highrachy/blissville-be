@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = {
   /**
@@ -16,5 +16,20 @@ module.exports = {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  bootstrap(/*{ strapi }*/) {},
+  bootstrap(/*{ strapi }*/) {
+    strapi.db.lifecycles.subscribe({
+      models: ["plugin::users-permissions.user"],
+      async beforeUpdate(event) {},
+      async afterCreate(event) {},
+      async beforeCreate(event) {
+        const { data } = event.params;
+        const firstLetter = data.firstName[0] + data.lastName[0];
+        const allUsers = await strapi.entityService.count(
+          "plugin::users-permissions.user"
+        );
+        data.referralCode =
+          firstLetter.toLowerCase() + (1000 + allUsers).toString();
+      },
+    });
+  },
 };
