@@ -66,7 +66,7 @@
     "title": {
       "type": "string",
       "default": "title",
-      "required": true
+      "required": false
     },
     "firstName": {
       "type": "string",
@@ -77,13 +77,6 @@
       "required": true
     },
     "phone": {
-      "type": "string"
-    },
-    "setPassword": {
-      "type": "boolean",
-      "default": false
-    },
-    "token": {
       "type": "string"
     },
     "permission": {
@@ -109,6 +102,11 @@
       "relation": "oneToMany",
       "target": "api::referral.referral",
       "mappedBy": "referredUser"
+    },
+    "referredBy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

@@ -8,7 +8,7 @@
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -18,7 +18,7 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "referrals"
     },
-    "firstName": {
+    "referralName": {
       "type": "string"
     },
     "email": {
@@ -31,7 +31,8 @@
       "inversedBy": "referrals"
     },
     "status": {
-      "type": "integer"
+      "type": "integer",
+      "default": 0
     },
     "totalReward": {
       "type": "biginteger",

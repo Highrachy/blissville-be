@@ -9,7 +9,7 @@ const { v4: uuidv4 } = require("uuid");
 module.exports = {
   async afterUpdate({ result }) {
     const randomText = uuidv4();
-    const token = randomText.slice(0, -6);
+    const resetPasswordToken = randomText.slice(0, -6);
     const password = randomText.slice(-8);
     if (result.status === STATUS.ASSIGNED) {
       const interestInfo = await strapi.entityService.findOne(
@@ -35,7 +35,6 @@ module.exports = {
       );
 
       let currentUser = userExists?.[0];
-      console.log("currentUser", currentUser);
 
       if (userExists.length === 0) {
         const newUser = await strapi.entityService.create(
@@ -50,10 +49,8 @@ module.exports = {
               phone: result.phone,
               password,
               provider: "local",
-              confirmed: false,
               role: 1,
-              setPassword: true,
-              token,
+              resetPasswordToken,
             },
           }
         );
