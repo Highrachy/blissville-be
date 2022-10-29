@@ -38,7 +38,12 @@ module.exports = () => ({
         );
         return { userInfo: entry };
       } else {
-        throw new ForbiddenError("Invalid entry");
+        if (!userInfo.resetPasswordToken) {
+          throw new ForbiddenError(
+            "It looks like the token has already been used"
+          );
+        }
+        throw new ForbiddenError("Invalid token");
       }
     } catch (err) {
       return err;

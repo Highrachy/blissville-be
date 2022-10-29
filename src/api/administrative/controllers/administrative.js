@@ -11,7 +11,7 @@ module.exports = {
         .service("api::administrative.administrative")
         .setPassword(ctx.request.body);
 
-      ctx.body = { data };
+      ctx.body = { ...data };
     } catch (err) {
       ctx.badRequest("Post report controller error", { moreDetails: err });
     }

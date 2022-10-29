@@ -41,7 +41,6 @@ module.exports = {
           "plugin::users-permissions.user",
           {
             data: {
-              title: result.title,
               firstName: result.firstName,
               lastName: result.lastName,
               email: result.email,
@@ -62,13 +61,13 @@ module.exports = {
         {
           filters: {
             property: interestInfo.property.id,
-            users_permissions_user: currentUser.id,
+            user: currentUser.id,
           },
         }
       );
 
       if (propertyAlreadyAssigned.length === 0) {
-        const newAssignedProperty = await strapi.entityService.create(
+        await strapi.entityService.create(
           "api::assigned-property.assigned-property",
           {
             data: {
@@ -93,7 +92,7 @@ module.exports = {
     Best Regards,<br>
     Operation's Team.`,
         buttonText: "Get Started",
-        buttonLink: "http://localhost:3000/app/set-password",
+        buttonLink: `http://localhost:3000/app/set-password?id=${currentUser.id}&token=${resetPasswordToken}`,
       });
     }
   },
