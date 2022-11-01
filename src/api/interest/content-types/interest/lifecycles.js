@@ -50,6 +50,7 @@ module.exports = {
               provider: "local",
               role: 1,
               resetPasswordToken,
+              referredBy: result.referredBy,
             },
           }
         );
@@ -76,7 +77,7 @@ module.exports = {
               initialPayment: result.initialPayment,
               paymentStartDate: result.paymentStartDate,
               property: interestInfo.property.id,
-              users_permissions_user: currentUser.id,
+              user: currentUser.id,
               package: result.package,
             },
           }
@@ -88,9 +89,9 @@ module.exports = {
         subject: `A property has been assigned to you`,
         firstName: result.firstName,
         contentTop: `Thank you for applying showing interest in our property. <br><br>
-    We are pleased to inform you that a property has been assigned to you. <br><br>
-    Best Regards,<br>
-    Operation's Team.`,
+    We are pleased to inform you that a property has been assigned to you. <br><br>`,
+        contentBottom: `Best Regards,<br>
+        Operation's Team.`,
         buttonText: "Get Started",
         buttonLink: `http://localhost:3000/app/set-password?id=${currentUser.id}&token=${resetPasswordToken}`,
       });

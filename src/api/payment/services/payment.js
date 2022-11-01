@@ -25,7 +25,7 @@ module.exports = () => ({
         PAYSTACK_URL.INITIALIZE,
         {
           amount: amount * 100,
-          callback_url: `${WEBSITE_HOST}/payment`,
+          callback_url: `${WEBSITE_HOST}/verify-payment`,
           email: user.email,
           metadata: {
             custom_fields: [

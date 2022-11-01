@@ -20,9 +20,82 @@ module.exports = {
   bootstrap(/*{ strapi }*/) {
     strapi.db.lifecycles.subscribe({
       models: ["plugin::users-permissions.user"],
-      async beforeUpdate(event) {},
-      async afterUpdate(event) {},
-      async afterCreate(event) {},
+      async afterUpdate(event) {
+        const userExists = await strapi.entityService.findMany(
+          "api::referral.referral",
+          {
+            filters: {
+              user: 19,
+              email: "christiano@ronaldo.com",
+            },
+          }
+        );
+        const id = userExists?.[0]?.id;
+        console.log("id", id);
+        const entry = await strapi.entityService.update(
+          "api::referral.referral",
+          9,
+          {
+            data: {
+              status: 1,
+            },
+          }
+        );
+      },
+      // async afterUpdate(event) {},
+      async afterCreate(event) {
+        const { params, result } = event;
+        const referredBy = params.data.referredBy;
+
+        if (referredBy) {
+          const userExists = await strapi.entityService.findMany(
+            "api::referral.referral",
+            {
+              filters: {
+                user: referredBy,
+                email: result.email,
+              },
+            }
+          );
+
+          if (userExists.length === 0) {
+            await strapi.entityService.create("api::referral.referral", {
+              data: {
+                user: referredBy,
+                referralName: result.firstName,
+                email: result.email,
+                referredUser: result.id,
+                status: 1,
+              },
+            });
+          } else {
+            await strapi.entityService.update(
+              "api::referral.referral",
+              userExists?.[0]?.id,
+              {
+                data: {
+                  status: 1,
+                  referredUser: result.id,
+                },
+              }
+            );
+          }
+        }
+
+        if (!result.resetPasswordToken) {
+          await strapi.config.email.send(strapi, {
+            to: result.email,
+            subject: `Welcome to Blissville`,
+            firstName: result.firstName,
+            contentTop: `Thank you for applying registering on Blissville. <br><br>
+            Your account has been successfully created. Complete your registration by clicking on the link below to verify your email.`,
+            contentBottom: `Best Regards,<br>
+            Operation's Team.`,
+            buttonText: "Verify Email",
+            buttonLink: `http://localhost:3000/app/set-password?id=${result.confirmationToken}`,
+          });
+        }
+      },
       async beforeCreate(event) {
         const randomText = uuidv4();
         const { data } = event.params;
