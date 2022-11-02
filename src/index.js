@@ -20,28 +20,6 @@ module.exports = {
   bootstrap(/*{ strapi }*/) {
     strapi.db.lifecycles.subscribe({
       models: ["plugin::users-permissions.user"],
-      async afterUpdate(event) {
-        const userExists = await strapi.entityService.findMany(
-          "api::referral.referral",
-          {
-            filters: {
-              user: 19,
-              email: "christiano@ronaldo.com",
-            },
-          }
-        );
-        const id = userExists?.[0]?.id;
-        console.log("id", id);
-        const entry = await strapi.entityService.update(
-          "api::referral.referral",
-          9,
-          {
-            data: {
-              status: 1,
-            },
-          }
-        );
-      },
       // async afterUpdate(event) {},
       async afterCreate(event) {
         const { params, result } = event;

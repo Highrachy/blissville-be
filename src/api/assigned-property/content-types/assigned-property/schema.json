@@ -40,10 +40,6 @@
       "type": "string",
       "required": false
     },
-    "status": {
-      "type": "string",
-      "default": "0"
-    },
     "offlinePayments": {
       "type": "relation",
       "relation": "oneToMany",
@@ -61,6 +57,25 @@
       "relation": "oneToMany",
       "target": "api::transaction.transaction",
       "mappedBy": "assignedProperty"
+    },
+    "expectedNextPayment": {
+      "type": "biginteger"
+    },
+    "refreshCalculationDate": {
+      "type": "date",
+      "required": true
+    },
+    "paymentDueDate": {
+      "type": "date"
+    },
+    "project": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::project.project"
+    },
+    "status": {
+      "type": "integer",
+      "default": 0
     }
   }
 }

@@ -120,6 +120,12 @@
       "relation": "oneToMany",
       "target": "api::interest.interest",
       "mappedBy": "property"
+    },
+    "transactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::transaction.transaction",
+      "mappedBy": "property"
     }
   }
 }

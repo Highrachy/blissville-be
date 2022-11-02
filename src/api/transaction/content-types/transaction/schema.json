@@ -4,10 +4,11 @@
   "info": {
     "singularName": "transaction",
     "pluralName": "transactions",
-    "displayName": "Transaction"
+    "displayName": "Transaction",
+    "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -26,14 +27,27 @@
       "relation": "oneToOne",
       "target": "api::offline-payment.offline-payment"
     },
-    "paymentSource": {
-      "type": "string"
-    },
     "receiptNo": {
       "type": "string"
     },
-    "additionalInfo": {
+    "reference": {
       "type": "string"
+    },
+    "paymentSource": {
+      "type": "integer",
+      "default": 0
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "transactions"
+    },
+    "property": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::property.property",
+      "inversedBy": "transactions"
     }
   }
 }

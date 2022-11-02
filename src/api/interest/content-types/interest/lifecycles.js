@@ -19,6 +19,11 @@ module.exports = {
           populate: {
             property: {
               fields: ["id", "name"],
+              populate: {
+                project: {
+                  fields: ["id", "name"],
+                },
+              },
             },
           },
           fields: ["id"],
@@ -63,6 +68,7 @@ module.exports = {
           filters: {
             property: interestInfo.property.id,
             user: currentUser.id,
+            status: 0,
           },
         }
       );
@@ -79,22 +85,25 @@ module.exports = {
               property: interestInfo.property.id,
               user: currentUser.id,
               package: result.package,
+              expectedNextPayment: result.initialPayment,
+              refreshCalculationDate: result.paymentStartDate,
+              paymentDueDate: result.paymentStartDate,
+              project: interestInfo.property.project.id,
             },
           }
         );
+        await strapi.config.email.send(strapi, {
+          to: result.email,
+          subject: `A property has been assigned to you`,
+          firstName: result.firstName,
+          contentTop: `Thank you for applying showing interest in our property. <br><br>
+      We are pleased to inform you that a property has been assigned to you. <br><br>`,
+          contentBottom: `Best Regards,<br>
+          Operation's Team.`,
+          buttonText: "Get Started",
+          buttonLink: `http://localhost:3000/app/set-password?id=${currentUser.id}&token=${resetPasswordToken}`,
+        });
       }
-
-      await strapi.config.email.send(strapi, {
-        to: result.email,
-        subject: `A property has been assigned to you`,
-        firstName: result.firstName,
-        contentTop: `Thank you for applying showing interest in our property. <br><br>
-    We are pleased to inform you that a property has been assigned to you. <br><br>`,
-        contentBottom: `Best Regards,<br>
-        Operation's Team.`,
-        buttonText: "Get Started",
-        buttonLink: `http://localhost:3000/app/set-password?id=${currentUser.id}&token=${resetPasswordToken}`,
-      });
     }
   },
 };
