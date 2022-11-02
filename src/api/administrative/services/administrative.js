@@ -1,7 +1,6 @@
 "use strict";
 
 const utils = require("@strapi/utils");
-const { add, parseISO, subDays } = require("date-fns");
 const { ForbiddenError, NotFoundError } = utils.errors;
 
 /**
@@ -63,9 +62,18 @@ module.exports = () => ({
           },
         }
       );
-      console.log("assignedProperty: ", assignedProperty);
+
       const referrals = await strapi.entityService.count(
         "api::referral.referral",
+        {
+          filters: {
+            user: user.id,
+          },
+        }
+      );
+
+      const transactions = await strapi.entityService.count(
+        "api::transaction.transaction",
         {
           filters: {
             user: user.id,
@@ -165,6 +173,7 @@ module.exports = () => ({
       const data = {
         assignedProperty,
         referrals,
+        transactions,
       };
 
       return { data };
@@ -172,107 +181,4 @@ module.exports = () => ({
       return err;
     }
   },
-  getNextPayment: async () => {
-    try {
-      let output;
-      // get last assigned property
-      const assignedProperty = {
-        id: 6,
-        price: 4_000_000,
-        paymentPlan: 4,
-        initialPayment: 2_000_000,
-        paymentStartDate: "2021-03-01T00:00:00.000Z",
-        package: "Shell Package",
-        status: "0",
-        createdAt: "2022-10-31T06:27:52.140Z",
-        updatedAt: "2022-10-31T06:27:52.140Z",
-      };
-
-      const paymentSchedules = generatePaymentSchedules(assignedProperty);
-      const amountPaid = 0;
-      const expectedTotal = calculateExpectedTotal(
-        amountPaid,
-        paymentSchedules
-      );
-
-      const interestInfo = await strapi.entityService.findMany(
-        "api::assigned-property.assigned-property",
-        {
-          populate: {
-            project: {
-              fields: ["id", "name"],
-            },
-          },
-          fields: ["id"],
-        }
-      );
-
-      return { expectedTotal, interestInfo };
-    } catch (err) {
-      return err;
-    }
-  },
 });
-
-const generatePaymentSchedules = (assignedProperty) => {
-  const {
-    price: propertyPrice,
-    paymentStartDate: initialPaymentDate,
-    initialPayment,
-    paymentPlan: noOfPaymentsAfterInitial,
-  } = assignedProperty;
-
-  const monthlyPayment =
-    (propertyPrice - initialPayment) / noOfPaymentsAfterInitial;
-  console.log("monthlyPayment: ", monthlyPayment);
-
-  const paymentDates = [
-    { date: parseISO(initialPaymentDate), amount: initialPayment },
-  ];
-
-  for (let i = 1; i <= noOfPaymentsAfterInitial; i += 1) {
-    const paymentDate = add(parseISO(initialPaymentDate), { days: 30 * i });
-    paymentDates.push({
-      date: paymentDate,
-      amount: monthlyPayment,
-    });
-  }
-
-  return paymentDates;
-};
-
-const calculateExpectedTotal = (amountPaid, paymentSchedules) => {
-  const todaysDate = parseISO("2021-03-08");
-  const frequency = 30;
-
-  return paymentSchedules.reduce(
-    (result, schedule) => {
-      const scheduleHasExpired =
-        subDays(schedule.date, frequency) <= todaysDate;
-      const userHasPaidForPastSchedule = amountPaid >= result.expectedTotal;
-
-      if (scheduleHasExpired || userHasPaidForPastSchedule) {
-        const expectedTotal = result.expectedTotal + schedule.amount;
-        return {
-          expectedTotal, // for internal use to get the total amount expected
-          expectedNextPayment: expectedTotal - amountPaid, // shown in ui
-          expiryDate: schedule.date, // used by cron job
-          dueDate:
-            userHasPaidForPastSchedule || result.dueDate === null
-              ? schedule.date
-              : result.dueDate, // shown in the UI
-        };
-      }
-
-      return result;
-    },
-    {
-      expectedTotal: 0,
-      expectedNextPayment: 0,
-      expiryDate: null,
-      dueDate: null,
-    }
-  );
-};
-// 35,0000
-// initialPayment

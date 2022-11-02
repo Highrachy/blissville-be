@@ -18,14 +18,5 @@ module.exports = {
         middlewares: [],
       },
     },
-    {
-      method: "GET",
-      path: "/administrative/next-payment",
-      handler: "administrative.nextPayment",
-      config: {
-        policies: [],
-        middlewares: [],
-      },
-    },
   ],
 };

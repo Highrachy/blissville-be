@@ -27,16 +27,4 @@ module.exports = {
       ctx.badRequest("Post report controller error", { moreDetails: err });
     }
   },
-
-  async nextPayment(ctx, next) {
-    try {
-      const data = await strapi
-        .service("api::administrative.administrative")
-        .getNextPayment();
-
-      ctx.body = { ...data };
-    } catch (err) {
-      ctx.badRequest("Post report controller error", { moreDetails: err });
-    }
-  },
 };
