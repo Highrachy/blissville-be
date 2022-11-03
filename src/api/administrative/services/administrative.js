@@ -6,8 +6,10 @@ const { ForbiddenError, NotFoundError } = utils.errors;
 /**
  * administrative service
  */
+const sliceEntries = (array, number) => array.slice(0, number);
+const getEntries = (array, number = 3) => {
+  const arr = sliceEntries(array, number);
 
-const getEntries = (array) => {
   return arr.map((item) => {
     return {
       id: item.id,
@@ -76,6 +78,14 @@ module.exports = () => ({
               },
             ],
           },
+          populate: {
+            property: {
+              fields: ["id", "name"],
+            },
+            project: {
+              fields: ["id", "name"],
+            },
+          },
         }
       );
       const assignedPropertyCount = await strapi.entityService.count(
@@ -103,20 +113,36 @@ module.exports = () => ({
             user: user.id,
           },
           sort: { createdAt: "desc" },
-          limit: 3,
+          populate: {
+            property: {
+              fields: ["id", "name"],
+              populate: {
+                project: {
+                  fields: ["id", "name"],
+                },
+              },
+            },
+          },
         }
       );
 
-      const transactionCount = await strapi.entityService.findMany(
+      const transactionCount = await strapi.entityService.count(
         "api::transaction.transaction",
         {
           filters: {
             user: user.id,
           },
-          sort: { createdAt: "desc" },
-          limit: 3,
         }
       );
+
+      const transactionsAmount = transactions.reduce((acc, cur) => {
+        return acc + parseInt(cur.amount, 10);
+      }, 0);
+
+      const expectedNextPayment = assignedProperty.reduce((acc, cur) => {
+        return acc + parseInt(cur.expectedNextPayment, 10);
+      }, 0);
+
       const data = {
         assignedProperty: {
           total: assignedPropertyCount,
@@ -128,6 +154,11 @@ module.exports = () => ({
         transactions: {
           total: transactionCount,
           data: getEntries(transactions),
+        },
+        paymentBreakdown: {
+          amountPaid: transactionsAmount,
+          expectedNextPayment,
+          referral: 0,
         },
       };
 
