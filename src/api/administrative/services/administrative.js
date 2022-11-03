@@ -7,6 +7,15 @@ const { ForbiddenError, NotFoundError } = utils.errors;
  * administrative service
  */
 
+const getEntries = (array) => {
+  return arr.map((item) => {
+    return {
+      id: item.id,
+      attributes: { ...item },
+    };
+  });
+};
+
 module.exports = () => ({
   setPassword: async ({ id, password, token }) => {
     try {
@@ -54,7 +63,22 @@ module.exports = () => ({
       if (!user) {
         throw new ForbiddenError("User information not found");
       }
-      const assignedProperty = await strapi.entityService.count(
+      const assignedProperty = await strapi.entityService.findMany(
+        "api::assigned-property.assigned-property",
+        {
+          filters: {
+            $and: [
+              {
+                user: user.id,
+              },
+              {
+                status: { $lt: 3 },
+              },
+            ],
+          },
+        }
+      );
+      const assignedPropertyCount = await strapi.entityService.count(
         "api::assigned-property.assigned-property",
         {
           filters: {
@@ -63,7 +87,7 @@ module.exports = () => ({
         }
       );
 
-      const referrals = await strapi.entityService.count(
+      const referralsCount = await strapi.entityService.count(
         "api::referral.referral",
         {
           filters: {
@@ -72,108 +96,39 @@ module.exports = () => ({
         }
       );
 
-      const transactions = await strapi.entityService.count(
+      const transactions = await strapi.entityService.findMany(
         "api::transaction.transaction",
         {
           filters: {
             user: user.id,
           },
+          sort: { createdAt: "desc" },
+          limit: 3,
         }
       );
 
-      // const jobs = await strapi.entityService.findMany("api::job.job", {
-      //   sort: { createdAt: "desc" },
-      // });
-      // const apartments = await strapi.entityService.findMany(
-      //   "api::apartment.apartment",
-      //   {
-      //     sort: { createdAt: "desc" },
-      //   }
-      // );
-      // const tenants = await strapi.entityService.findMany(
-      //   "api::tenant.tenant",
-      //   {
-      //     sort: { createdAt: "desc" },
-      //   }
-      // );
-
-      // const applicantsCount = await strapi.entityService.count(
-      //   "api::applicant.applicant",
-      //   {
-      //     filters: {
-      //       status: "APPLIED",
-      //     },
-      //   }
-      // );
-      // const jobsCount = await strapi.entityService.count("api::job.job", {
-      //   filters: {
-      //     available: true,
-      //   },
-      // });
-
-      // const apartmentsWithUnits = await strapi.entityService.findMany(
-      //   "api::apartment.apartment",
-      //   {
-      //     filters: {
-      //       availableUnits: { $ne: 0 },
-      //     },
-      //   }
-      // );
-
-      // const apartmentsCount = apartmentsWithUnits.reduce(
-      //   (acc, apartment) => acc + apartment.availableUnits,
-      //   0
-      // );
-
-      // const tenantsCount = await strapi.entityService.count(
-      //   "api::tenant.tenant",
-      //   {
-      //     filters: {
-      //       $or: [
-      //         {
-      //           status: "WAITING LIST",
-      //         },
-      //         {
-      //           status: "APPLIED",
-      //         },
-      //       ],
-      //     },
-      //   }
-      // );
-
-      // const data = {
-      //   applicants: {
-      //     total: applicants.length,
-      //     data: getEntries(applicants),
-      //     text: `${applicantsCount} pending application${
-      //       applicantsCount === 1 ? "" : "s"
-      //     }`,
-      //   },
-      //   apartments: {
-      //     total: apartments.length,
-      //     data: getEntries(apartments),
-      //     text: `${apartmentsCount} available unit${
-      //       apartmentsCount === 1 ? "" : "s"
-      //     }`,
-      //   },
-      //   tenants: {
-      //     total: tenants.length,
-      //     data: getEntries(tenants),
-      //     text: `${tenantsCount} pending application${
-      //       tenantsCount === 1 ? "" : "s"
-      //     }`,
-      //   },
-      //   jobs: {
-      //     total: jobs.length,
-      //     data: getEntries(jobs),
-      //     text: `${jobsCount} active job${jobsCount === 1 ? "" : "s"}`,
-      //   },
-      // };
-
+      const transactionCount = await strapi.entityService.findMany(
+        "api::transaction.transaction",
+        {
+          filters: {
+            user: user.id,
+          },
+          sort: { createdAt: "desc" },
+          limit: 3,
+        }
+      );
       const data = {
-        assignedProperty,
-        referrals,
-        transactions,
+        assignedProperty: {
+          total: assignedPropertyCount,
+          data: getEntries(assignedProperty),
+        },
+        referrals: {
+          total: referralsCount,
+        },
+        transactions: {
+          total: transactionCount,
+          data: getEntries(transactions),
+        },
       };
 
       return { data };

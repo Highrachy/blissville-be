@@ -20,6 +20,8 @@
     "better-sqlite3": "7.4.6",
     "date-fns": "^2.29.3",
     "mjml": "^4.13.0",
+    "pg": "^8.8.0",
+    "pg-connection-string": "^2.5.0",
     "slugify": "^1.6.5",
     "strapi-plugin-populate-deep": "^0.1.2",
     "uuid": "^9.0.0"
