@@ -1825,13 +1825,13 @@
     lodash "4.17.21"
     nodemailer "6.7.7"
 
-"@strapi/provider-email-sendgrid@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@strapi/provider-email-sendgrid/-/provider-email-sendgrid-4.4.5.tgz#18645a239a3b85ea2f0f5ec83e539fc438624823"
-  integrity sha512-35W6/zeWwqP6IwAT09DL+bxq3r80M2uGVH5bQfT2igok3hcHhy01FQiKcoCFuFiNn41mUEVcPmqx86gDRFH1Tw==
+"@strapi/provider-email-sendgrid@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@strapi/provider-email-sendgrid/-/provider-email-sendgrid-4.4.6.tgz#d74623eb73f07048c9dcc74b623ca96647bd7a5a"
+  integrity sha512-EG9rnSAKHiVBcD29yGpc/+xYZc01CPJ0dHmSCR3t30InvUCLn1t8CEA2oA0BMfR4APWKDVCAWfxYRHhsZo2sLA==
   dependencies:
     "@sendgrid/mail" "7.7.0"
-    "@strapi/utils" "4.4.5"
+    "@strapi/utils" "4.4.6"
 
 "@strapi/provider-email-sendmail@4.4.1":
   version "4.4.1"
@@ -1931,10 +1931,10 @@
     lodash "4.17.21"
     yup "0.32.9"
 
-"@strapi/utils@4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@strapi/utils/-/utils-4.4.5.tgz#3ca8f7c49b9f96a72f12011e63206886db4819e0"
-  integrity sha512-JloHkrDJgn0ddIwI3HSMFxgDe/fD6m+khq8XIrN8ixOxJSYS5jlWysGQleSdbjzp4s3ADHIL+ovAeBuIiwd3Rw==
+"@strapi/utils@4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@strapi/utils/-/utils-4.4.6.tgz#813d977575485d1305b895e780c60e686af09772"
+  integrity sha512-YNEkEswuEC45zR2tc+IzlHjJnE40dEKsWy3MyU/mshQoNC8lU4zBIhJ3DmyNGB5+rGX91JaZPkQGftcUZddr6A==
   dependencies:
     "@sindresorhus/slugify" "1.1.0"
     date-fns "2.29.2"
