@@ -151,6 +151,7 @@ module.exports = {
             "yyyy-MM-dd"
           ),
           paymentDueDate: format(nextPayment.paymentDueDate, "yyyy-MM-dd"),
+          totalAmountPaid: sumOfAllTransactions,
         },
       }
     );

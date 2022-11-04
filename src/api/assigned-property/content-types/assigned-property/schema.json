@@ -76,6 +76,10 @@
     "status": {
       "type": "integer",
       "default": 0
+    },
+    "totalAmountPaid": {
+      "type": "biginteger",
+      "default": "0"
     }
   }
 }

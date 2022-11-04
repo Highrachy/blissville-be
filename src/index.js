@@ -22,11 +22,11 @@ module.exports = {
       models: ["plugin::users-permissions.user"],
       // async afterUpdate(event) {},
       async afterCreate(event) {
-        const { params, result } = event;
-        const referredBy = params.data.referredBy;
+        const { result } = event;
+        const referredBy = result.referredBy;
 
         if (referredBy) {
-          const userExists = await strapi.entityService.findMany(
+          const referralExists = await strapi.entityService.findMany(
             "api::referral.referral",
             {
               filters: {
@@ -36,7 +36,7 @@ module.exports = {
             }
           );
 
-          if (userExists.length === 0) {
+          if (referralExists.length === 0) {
             await strapi.entityService.create("api::referral.referral", {
               data: {
                 user: referredBy,
@@ -49,7 +49,7 @@ module.exports = {
           } else {
             await strapi.entityService.update(
               "api::referral.referral",
-              userExists?.[0]?.id,
+              referralExists?.[0]?.id,
               {
                 data: {
                   status: 1,
@@ -70,7 +70,7 @@ module.exports = {
             contentBottom: `Best Regards,<br>
             Operation's Team.`,
             buttonText: "Verify Email",
-            buttonLink: `http://localhost:3000/app/set-password?id=${result.confirmationToken}`,
+            buttonLink: `${FRONT_END_URL}/app/set-password?id=${result.confirmationToken}`,
           });
         }
       },

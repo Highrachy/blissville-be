@@ -101,7 +101,7 @@ module.exports = {
           contentBottom: `Best Regards,<br>
           Operation's Team.`,
           buttonText: "Get Started",
-          buttonLink: `http://localhost:3000/app/set-password?id=${currentUser.id}&token=${resetPasswordToken}`,
+          buttonLink: `${FRONT_END_URL}/app/set-password?id=${currentUser.id}&token=${resetPasswordToken}`,
         });
       }
     }
