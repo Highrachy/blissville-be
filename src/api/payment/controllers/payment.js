@@ -20,7 +20,10 @@ module.exports = {
       const data = await strapi
         .service("api::payment.payment")
         .verifyPaystackPayment(ctx.request.params);
-      ctx.body = { data };
+      if (data?.error) {
+        ctx.badRequest(data.error);
+      }
+      ctx.body = { ...data };
     } catch (err) {
       ctx.body = err;
     }

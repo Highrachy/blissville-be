@@ -84,7 +84,7 @@ const generateExpectedNextPayment = (assignedProperty, totalTransactions) => {
 module.exports = {
   async beforeCreate(event) {
     const { data } = event.params;
-    const allTransactions = await strapi.entityService.findMany(
+    const allTransactions = await strapi.entityService.count(
       "api::transaction.transaction"
     );
 
@@ -104,7 +104,7 @@ module.exports = {
       }
     );
 
-    data.receiptNo = generateReceipt(allTransactions.length + 1);
+    data.receiptNo = generateReceipt(allTransactions + 1);
     data.user = assignedPropertyInfo.user.id;
     data.property = assignedPropertyInfo.property.id;
   },

@@ -68,7 +68,81 @@ module.exports = () => ({
           },
         }
       );
-      return response.data.data;
+
+      const {
+        data: { data: payment },
+      } = response;
+      if (payment?.status !== "success") {
+        return {
+          error: "Payment was not successful",
+          payment,
+        };
+      }
+
+      const { value } =
+        payment.metadata.custom_fields[
+          payment.metadata.custom_fields.length - 1
+        ];
+
+      const assignedPropertyId = JSON.parse(value)?.assignedPropertyId;
+      if (!assignedPropertyId) {
+        return {
+          error: "Assigned Property not found",
+          payment,
+        };
+      }
+
+      // get assigned property via assigned property id
+      const assignedProperty = await strapi.entityService.findOne(
+        "api::assigned-property.assigned-property",
+        assignedPropertyId,
+        {
+          populate: ["property", "user"],
+        }
+      );
+
+      if (!assignedProperty.property) {
+        return {
+          error: "Property Information not found",
+          payment,
+        };
+      }
+
+      const payload = {
+        assignedProperty: assignedProperty.id,
+        amount: payment.amount / 100,
+        reference: payment.reference,
+        paymentSource: 1, //  PAYMENT_SOURCE.PAYSTACK,
+      };
+
+      // check if transaction already exists via payload.reference
+      const transactions = await strapi.entityService.findMany(
+        "api::transaction.transaction",
+        {
+          filters: {
+            reference: payload.reference,
+          },
+        }
+      );
+
+      let transaction = null;
+      if (transactions.length > 0) {
+        transaction = transactions[0];
+      } else {
+        // create transaction with payload
+        transaction = await strapi.entityService.create(
+          "api::transaction.transaction",
+          {
+            data: payload,
+          }
+        );
+      }
+      return {
+        transaction,
+        payment,
+        property: assignedProperty.property,
+        user: assignedProperty.user,
+      };
     } catch (err) {
       return err;
     }
