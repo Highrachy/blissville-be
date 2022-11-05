@@ -10,6 +10,15 @@ module.exports = {
       },
     },
     {
+      method: "GET",
+      path: "/administrative/user-transactions",
+      handler: "administrative.userTransactions",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
       method: "POST",
       path: "/administrative/set-password",
       handler: "administrative.setPassword",

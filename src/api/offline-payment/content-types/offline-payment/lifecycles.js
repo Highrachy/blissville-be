@@ -13,6 +13,11 @@ module.exports = {
           populate: {
             assignedProperty: {
               fields: ["id"],
+              populate: {
+                property: {
+                  fields: ["id"],
+                },
+              },
             },
           },
           fields: ["id"],
@@ -34,6 +39,8 @@ module.exports = {
             amount: result.amount,
             reference: `offline-${result.id}`,
             offlinePayment: result.id,
+            user: offlinePaymentInfo.user,
+            property: offlinePaymentInfo.assignedProperty.property.id,
           },
         });
       }

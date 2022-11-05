@@ -24,7 +24,18 @@ module.exports = {
 
       ctx.body = { ...data };
     } catch (err) {
-      ctx.badRequest("Post report controller error", { moreDetails: err });
+      ctx.badRequest("User dashboard controller error", { moreDetails: err });
+    }
+  },
+  async userTransactions(ctx, next) {
+    try {
+      const data = await strapi
+        .service("api::administrative.administrative")
+        .getUserTransactions(ctx.state.user);
+
+      ctx.body = { ...data };
+    } catch (err) {
+      ctx.badRequest("User transaction controller error", { moreDetails: err });
     }
   },
 };

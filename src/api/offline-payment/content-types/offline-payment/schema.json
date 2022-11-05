@@ -45,7 +45,7 @@
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
     },
-    "users": {
+    "user": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",

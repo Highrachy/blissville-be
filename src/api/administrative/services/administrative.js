@@ -7,8 +7,10 @@ const { ForbiddenError, NotFoundError } = utils.errors;
  * administrative service
  */
 const sliceEntries = (array, number) => array.slice(0, number);
-const getEntries = (array, number = 3) => {
+const getEntries = (array, number = 3, withAttributes = false) => {
   const arr = sliceEntries(array, number);
+
+  if (!withAttributes) return arr;
 
   return arr.map((item) => {
     return {
@@ -16,6 +18,57 @@ const getEntries = (array, number = 3) => {
       attributes: { ...item },
     };
   });
+};
+
+const getUserTransactions = async (user) => {
+  const transactions = await strapi.entityService.findMany(
+    "api::transaction.transaction",
+    {
+      filters: {
+        user: user.id,
+      },
+      sort: { createdAt: "desc" },
+      populate: {
+        property: {
+          fields: ["id", "name", "slug"],
+          populate: {
+            project: {
+              fields: ["id", "name", "slug"],
+            },
+          },
+        },
+      },
+    }
+  );
+  return transactions;
+};
+
+const getUserNextPayments = async (user) => {
+  const nextPayments = await strapi.entityService.findMany(
+    "api::assigned-property.assigned-property",
+    {
+      filters: {
+        $and: [
+          {
+            user: user.id,
+          },
+          {
+            status: { $lt: 3 }, // payment is not completed
+          },
+        ],
+      },
+      populate: {
+        property: {
+          fields: ["id", "name"],
+        },
+        project: {
+          fields: ["id", "name"],
+        },
+      },
+    }
+  );
+
+  return nextPayments;
 };
 
 module.exports = () => ({
@@ -65,29 +118,7 @@ module.exports = () => ({
       if (!user) {
         throw new ForbiddenError("User information not found");
       }
-      const assignedProperty = await strapi.entityService.findMany(
-        "api::assigned-property.assigned-property",
-        {
-          filters: {
-            $and: [
-              {
-                user: user.id,
-              },
-              {
-                status: { $lt: 3 },
-              },
-            ],
-          },
-          populate: {
-            property: {
-              fields: ["id", "name"],
-            },
-            project: {
-              fields: ["id", "name"],
-            },
-          },
-        }
-      );
+      const assignedProperty = await getUserNextPayments(user);
       const assignedPropertyCount = await strapi.entityService.count(
         "api::assigned-property.assigned-property",
         {
@@ -106,25 +137,7 @@ module.exports = () => ({
         }
       );
 
-      const transactions = await strapi.entityService.findMany(
-        "api::transaction.transaction",
-        {
-          filters: {
-            user: user.id,
-          },
-          sort: { createdAt: "desc" },
-          populate: {
-            property: {
-              fields: ["id", "name"],
-              populate: {
-                project: {
-                  fields: ["id", "name"],
-                },
-              },
-            },
-          },
-        }
-      );
+      const transactions = await getUserTransactions(user);
 
       const transactionCount = await strapi.entityService.count(
         "api::transaction.transaction",
@@ -160,6 +173,56 @@ module.exports = () => ({
           expectedNextPayment,
           referral: 0,
         },
+      };
+
+      return { data };
+    } catch (err) {
+      return err;
+    }
+  },
+  getUserTransactions: async (user) => {
+    try {
+      if (!user) {
+        throw new ForbiddenError("User information not found");
+      }
+
+      const transactions = await getUserTransactions(user);
+
+      const nextPayments = await getUserNextPayments(user);
+
+      const offlinePayments = await strapi.entityService.findMany(
+        "api::offline-payment.offline-payment",
+        {
+          filters: {
+            $and: [
+              {
+                user: user.id,
+              },
+              {
+                status: { $eq: 0 }, // payment is still pending
+              },
+            ],
+          },
+          populate: {
+            assignedProperty: {
+              populate: {
+                property: {
+                  populate: {
+                    project: {
+                      fields: ["id", "name", "slug"],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }
+      );
+
+      const data = {
+        transactions,
+        nextPayments,
+        offlinePayments,
       };
 
       return { data };
