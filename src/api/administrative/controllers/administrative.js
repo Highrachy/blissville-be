@@ -38,4 +38,26 @@ module.exports = {
       ctx.badRequest("User transaction controller error", { moreDetails: err });
     }
   },
+  async adminDashboard(ctx, next) {
+    try {
+      const data = await strapi
+        .service("api::administrative.administrative")
+        .getAdminDashboard();
+
+      ctx.body = { ...data };
+    } catch (err) {
+      ctx.badRequest("User dashboard controller error", { moreDetails: err });
+    }
+  },
+  async adminTransactions(ctx, next) {
+    try {
+      const data = await strapi
+        .service("api::administrative.administrative")
+        .getAdminTransactions();
+
+      ctx.body = { ...data };
+    } catch (err) {
+      ctx.badRequest("User transaction controller error", { moreDetails: err });
+    }
+  },
 };

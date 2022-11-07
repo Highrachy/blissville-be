@@ -19,6 +19,24 @@ module.exports = {
       },
     },
     {
+      method: "GET",
+      path: "/administrative/admin-dashboard",
+      handler: "administrative.adminDashboard",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
+      path: "/administrative/admin-transactions",
+      handler: "administrative.adminTransactions",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
       method: "POST",
       path: "/administrative/set-password",
       handler: "administrative.setPassword",

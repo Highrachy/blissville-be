@@ -43,6 +43,26 @@ const getUserTransactions = async (user) => {
   return transactions;
 };
 
+const getAdminTransactions = async (user) => {
+  const transactions = await strapi.entityService.findMany(
+    "api::transaction.transaction",
+    {
+      sort: { createdAt: "desc" },
+      populate: {
+        property: {
+          fields: ["id", "name", "slug"],
+          populate: {
+            project: {
+              fields: ["id", "name", "slug"],
+            },
+          },
+        },
+      },
+    }
+  );
+  return transactions;
+};
+
 const getUserNextPayments = async (user) => {
   const nextPayments = await strapi.entityService.findMany(
     "api::assigned-property.assigned-property",
@@ -52,6 +72,31 @@ const getUserNextPayments = async (user) => {
           {
             user: user.id,
           },
+          {
+            status: { $lt: 3 }, // payment is not completed
+          },
+        ],
+      },
+      populate: {
+        property: {
+          fields: ["id", "name"],
+        },
+        project: {
+          fields: ["id", "name"],
+        },
+      },
+    }
+  );
+
+  return nextPayments;
+};
+
+const getAdminNextPayments = async (user) => {
+  const nextPayments = await strapi.entityService.findMany(
+    "api::assigned-property.assigned-property",
+    {
+      filters: {
+        $and: [
           {
             status: { $lt: 3 }, // payment is not completed
           },
@@ -198,6 +243,114 @@ module.exports = () => ({
               {
                 user: user.id,
               },
+              {
+                status: { $eq: 0 }, // payment is still pending
+              },
+            ],
+          },
+          populate: {
+            assignedProperty: {
+              populate: {
+                property: {
+                  populate: {
+                    project: {
+                      fields: ["id", "name", "slug"],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }
+      );
+
+      const data = {
+        transactions,
+        nextPayments,
+        offlinePayments,
+      };
+
+      return { data };
+    } catch (err) {
+      return err;
+    }
+  },
+  getAdminDashboard: async () => {
+    try {
+      const projectCount = await strapi.entityService.count(
+        "api::project.project"
+      );
+      const userCount = await strapi.entityService.count(
+        "plugin::users-permissions.user"
+      );
+      const propertyCount = await strapi.entityService.count(
+        "api::property.property"
+      );
+      const interestCount = await strapi.entityService.count(
+        "api::interest.interest"
+      );
+
+      const contactCount = await strapi.entityService.count(
+        "api::contact.contact"
+      );
+      const visitationCount = await strapi.entityService.count(
+        "api::visitation.visitation"
+      );
+
+      const transactionCount = await strapi.entityService.count(
+        "api::transaction.transaction"
+      );
+
+      const slideshowCount = await strapi.entityService.count(
+        "api::project.project",
+        {
+          filters: {
+            featured: true,
+          },
+        }
+      );
+
+      const data = {
+        projects: {
+          total: projectCount,
+        },
+        messages: {
+          total: contactCount,
+        },
+        properties: {
+          total: propertyCount,
+        },
+        interests: {
+          total: interestCount,
+        },
+        users: {
+          total: userCount,
+        },
+        visitations: {
+          total: visitationCount,
+        },
+        transactions: {
+          total: transactionCount,
+        },
+        slideshows: {
+          total: slideshowCount,
+        },
+      };
+
+      return { data };
+    } catch (err) {
+      return err;
+    }
+  },
+  getAdminTransactions: async () => {
+    try {
+      const transactions = await getAdminTransactions();
+      const nextPayments = await getAdminNextPayments();
+      const offlinePayments = await strapi.entityService.findMany(
+        "api::offline-payment.offline-payment",
+        {
+          filters: {
+            $and: [
               {
                 status: { $eq: 0 }, // payment is still pending
               },
