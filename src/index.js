@@ -22,8 +22,8 @@ module.exports = {
       models: ["plugin::users-permissions.user"],
       // async afterUpdate(event) {},
       async afterCreate(event) {
-        const { result } = event;
-        const referredBy = result.referredBy;
+        const { result, params } = event;
+        const referredBy = params?.data?.referredBy || null;
 
         if (referredBy) {
           const referralExists = await strapi.entityService.findMany(
