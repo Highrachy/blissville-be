@@ -33,6 +33,7 @@ module.exports = {
       const userExists = await strapi.entityService.findMany(
         "plugin::users-permissions.user",
         {
+          populate: "*",
           filters: {
             email: result.email,
           },
@@ -92,6 +93,37 @@ module.exports = {
             },
           }
         );
+
+        const referredBy =
+          result?.referredBy ||
+          currentUser?.referredBy?.id ||
+          currentUser?.referredBy;
+
+        if (referredBy) {
+          const referralExists = await strapi.entityService.findMany(
+            "api::referral.referral",
+            {
+              filters: {
+                user: referredBy,
+                email: currentUser.email,
+              },
+            }
+          );
+
+          if (referralExists.length > 0 && referralExists[0].status < 2) {
+            await strapi.entityService.update(
+              "api::referral.referral",
+              referralExists[0].id,
+              {
+                data: {
+                  status: 2,
+                  totalReward: 0.05 * result.price,
+                },
+              }
+            );
+          }
+        }
+
         await strapi.config.email.send(strapi, {
           to: result.email,
           subject: `A property has been assigned to you`,

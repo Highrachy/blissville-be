@@ -6,6 +6,13 @@ const pad = (num, size) => {
   return num;
 };
 
+const REWARD_PERCENTAGE = 0.05;
+const REWARD_STATUS = {
+  PENDING: 2,
+  ACCUMULATING: 3,
+  REWARDED: 4,
+};
+
 const getCurrentYear = new Date().getFullYear().toString().slice(-2);
 
 const generateReceipt = (receiptNumber) => {
@@ -114,10 +121,17 @@ module.exports = {
       "api::transaction.transaction",
       result.id,
       {
-        populate: "*",
+        populate: {
+          assignedProperty: {},
+          property: {},
+          user: {
+            populate: {
+              referredBy: {},
+            },
+          },
+        },
       }
     );
-
     const { assignedProperty, amount, property, user } = transactionInfo;
 
     const allTransactions = await strapi.entityService.findMany(
@@ -125,6 +139,7 @@ module.exports = {
       {
         filters: {
           user: user.id,
+          property: property.id,
         },
       }
     );
@@ -155,6 +170,39 @@ module.exports = {
         },
       }
     );
+
+    if (user?.referredBy) {
+      const totalReward = REWARD_PERCENTAGE * assignedProperty.price;
+      const accumulatedReward = REWARD_PERCENTAGE * sumOfAllTransactions;
+      const status =
+        totalReward === accumulatedReward
+          ? REWARD_STATUS.REWARDED
+          : REWARD_STATUS.ACCUMULATING;
+
+      const referralExists = await strapi.entityService.findMany(
+        "api::referral.referral",
+        {
+          filters: {
+            user: user?.referredBy.id,
+            referredUser: user?.id,
+          },
+        }
+      );
+
+      if (referralExists.length > 0) {
+        await strapi.entityService.update(
+          "api::referral.referral",
+          referralExists?.[0]?.id,
+          {
+            data: {
+              totalReward,
+              accumulatedReward,
+              status,
+            },
+          }
+        );
+      }
+    }
 
     await strapi.config.email.send(strapi, {
       to: user.email,
