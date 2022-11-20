@@ -16,6 +16,17 @@ module.exports = {
       ctx.badRequest("Post report controller error", { moreDetails: err });
     }
   },
+  async forgotPassword(ctx, next) {
+    try {
+      const data = await strapi
+        .service("api::administrative.administrative")
+        .forgotPassword(ctx.request.body);
+
+      ctx.body = { ...data };
+    } catch (err) {
+      ctx.badRequest("Post report controller error", { moreDetails: err });
+    }
+  },
   async userDashboard(ctx, next) {
     try {
       const data = await strapi

@@ -2,6 +2,7 @@
 
 const utils = require("@strapi/utils");
 const { ForbiddenError, NotFoundError } = utils.errors;
+const { v4: uuidv4 } = require("uuid");
 
 /**
  * administrative service
@@ -154,6 +155,58 @@ module.exports = () => ({
         }
         throw new ForbiddenError("Invalid token");
       }
+    } catch (err) {
+      return err;
+    }
+  },
+  forgotPassword: async ({ email }) => {
+    try {
+      const randomText = uuidv4();
+      const resetPasswordToken = randomText.slice(0, -6);
+      if (!email) {
+        throw new ForbiddenError("Missing parameters");
+      }
+
+      const userInfo = await strapi.entityService.findMany(
+        "plugin::users-permissions.user",
+        {
+          filters: {
+            $and: [
+              {
+                email,
+              },
+            ],
+          },
+        }
+      );
+
+      if (userInfo?.length === 0) {
+        throw new NotFoundError("Invalid user");
+      }
+      const user = userInfo[0];
+
+      const entry = await strapi.entityService.update(
+        "plugin::users-permissions.user",
+        user.id,
+        {
+          data: {
+            resetPasswordToken,
+          },
+        }
+      );
+      await strapi.config.email.send(strapi, {
+        to: user.email,
+        subject: `Password reset request`,
+        firstName: user.firstName,
+        contentTop: `There was a request to change your password! <br><br>
+        If you did not make this request then please ignore this email. <br><br>
+        Otherwise, please click this link to change your password: <br><br>`,
+        contentBottom: `Best Regards,<br>
+        Operation's Team.`,
+        buttonText: "Reset Password",
+        buttonLink: `${process.env.FRONT_END_URL}/app/reset-password?id=${user.id}&token=${resetPasswordToken}`,
+      });
+      return { success: true };
     } catch (err) {
       return err;
     }

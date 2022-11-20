@@ -45,5 +45,14 @@ module.exports = {
         middlewares: [],
       },
     },
+    {
+      method: "POST",
+      path: "/administrative/forgot-password",
+      handler: "administrative.forgotPassword",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };

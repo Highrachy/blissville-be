@@ -70,7 +70,7 @@ module.exports = {
             contentBottom: `Best Regards,<br>
             Operation's Team.`,
             buttonText: "Verify Email",
-            buttonLink: `${process.env.FRONT_END_URL}/app/set-password?id=${result.confirmationToken}`,
+            buttonLink: `${process.env.FRONT_END_URL}/app/reset-password?id=${result.confirmationToken}`,
           });
         }
       },

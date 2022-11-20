@@ -133,7 +133,7 @@ module.exports = {
           contentBottom: `Best Regards,<br>
           Operation's Team.`,
           buttonText: "Get Started",
-          buttonLink: `${process.env.FRONT_END_URL}/app/set-password?id=${currentUser.id}&token=${resetPasswordToken}`,
+          buttonLink: `${process.env.FRONT_END_URL}/app/reset-password?id=${currentUser.id}&token=${resetPasswordToken}`,
         });
       }
     }
