@@ -234,6 +234,21 @@ module.exports = () => ({
           },
         }
       );
+      const interestCount = await strapi.entityService.count(
+        "api::interest.interest",
+        {
+          filters: {
+            $and: [
+              {
+                email: user.email,
+              },
+              {
+                status: { $eq: 0 },
+              },
+            ],
+          },
+        }
+      );
 
       const transactions = await getUserTransactions(user);
 
@@ -261,6 +276,9 @@ module.exports = () => ({
         },
         referrals: {
           total: referralsCount,
+        },
+        interests: {
+          total: interestCount,
         },
         transactions: {
           total: transactionCount,
