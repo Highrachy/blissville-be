@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 
 module.exports = {
   async afterUpdate({ result }) {
+    let isNewUser = false;
     const randomText = uuidv4();
     const resetPasswordToken = randomText.slice(0, -6);
     const password = randomText.slice(-8);
@@ -61,6 +62,7 @@ module.exports = {
           }
         );
         currentUser = newUser;
+        isNewUser = true;
       }
 
       const propertyAlreadyAssigned = await strapi.entityService.findMany(
@@ -75,7 +77,7 @@ module.exports = {
       );
 
       if (propertyAlreadyAssigned.length === 0) {
-        await strapi.entityService.create(
+        const assignedProperty = await strapi.entityService.create(
           "api::assigned-property.assigned-property",
           {
             data: {
@@ -99,7 +101,12 @@ module.exports = {
           currentUser?.referredBy?.id ||
           currentUser?.referredBy;
 
-        if (referredBy) {
+        if (referredBy && isNewUser) {
+          const referredByUser = await strapi.entityService.findOne(
+            "plugin::users-permissions.user",
+            referredBy
+          );
+
           const referralExists = await strapi.entityService.findMany(
             "api::referral.referral",
             {
@@ -111,13 +118,17 @@ module.exports = {
           );
 
           if (referralExists.length > 0 && referralExists[0].status < 2) {
+            const referralPercentage =
+              referredByUser?.referralPercentage || 2.5;
             await strapi.entityService.update(
               "api::referral.referral",
               referralExists[0].id,
               {
                 data: {
-                  status: 2,
-                  totalReward: 0.05 * result.price,
+                  status: 2, // 2: pending reward since property has been assigned
+                  totalReward: (referralPercentage / 100) * result.price,
+                  referralPercentage,
+                  assignedProperty: assignedProperty.id,
                 },
               }
             );

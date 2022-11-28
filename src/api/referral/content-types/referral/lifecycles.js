@@ -28,4 +28,28 @@ module.exports = {
       });
     }
   },
+  async beforeUpdate(event) {
+    const {
+      data,
+      where: { id },
+    } = event.params;
+
+    if (id && data.referralPercentage) {
+      const referralInfo = await strapi.entityService.findOne(
+        "api::referral.referral",
+        id,
+        {
+          populate: {
+            assignedProperty: {},
+          },
+        }
+      );
+
+      if (referralInfo.assignedProperty) {
+        data.totalReward =
+          ((data.referralPercentage || 2.5) / 100) *
+          referralInfo.assignedProperty.price;
+      }
+    }
+  },
 };

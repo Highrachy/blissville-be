@@ -119,6 +119,12 @@
       "relation": "oneToMany",
       "target": "api::offline-payment.offline-payment",
       "mappedBy": "users"
+    },
+    "referralPercentage": {
+      "type": "float",
+      "default": 2.5,
+      "max": 5,
+      "min": 1
     }
   }
 }

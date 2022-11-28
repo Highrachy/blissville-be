@@ -6,7 +6,6 @@ const pad = (num, size) => {
   return num;
 };
 
-const REWARD_PERCENTAGE = 0.05;
 const REWARD_STATUS = {
   PENDING: 2,
   ACCUMULATING: 3,
@@ -57,7 +56,7 @@ const calculateExpectedTotal = (amountPaid, paymentSchedules) => {
     (result, schedule) => {
       const scheduleHasExpired =
         subDays(schedule.date, frequency) <= todaysDate;
-      const userHasPaidForPastSchedule = amountPaid >= result.expectedTotal;
+      const userHasPaidForPastSchedule = amountPaid + 1 >= result.expectedTotal; // added +1 to account decimal numbers
 
       if (scheduleHasExpired || userHasPaidForPastSchedule) {
         const expectedTotal = result.expectedTotal + schedule.amount;
@@ -122,7 +121,11 @@ module.exports = {
       result.id,
       {
         populate: {
-          assignedProperty: {},
+          assignedProperty: {
+            populate: {
+              referrals: {},
+            },
+          },
           property: {},
           user: {
             populate: {
@@ -172,35 +175,64 @@ module.exports = {
     );
 
     if (user?.referredBy) {
-      const totalReward = REWARD_PERCENTAGE * assignedProperty.price;
-      const accumulatedReward = REWARD_PERCENTAGE * sumOfAllTransactions;
-      const status =
-        totalReward === accumulatedReward
-          ? REWARD_STATUS.REWARDED
-          : REWARD_STATUS.ACCUMULATING;
-
       const referralExists = await strapi.entityService.findMany(
         "api::referral.referral",
         {
+          populate: {
+            assignedProperty: {},
+          },
           filters: {
             user: user?.referredBy.id,
             referredUser: user?.id,
+            status: { $lt: REWARD_STATUS.REWARDED },
           },
         }
       );
 
-      if (referralExists.length > 0) {
-        await strapi.entityService.update(
-          "api::referral.referral",
-          referralExists?.[0]?.id,
-          {
-            data: {
-              totalReward,
-              accumulatedReward,
-              status,
-            },
-          }
-        );
+      if (referralExists.length === 1) {
+        const REWARD_PERCENTAGE =
+          (referralExists?.[0]?.referralPercentage || 2.5) / 100;
+        const totalReward = REWARD_PERCENTAGE * assignedProperty.price;
+        const accumulatedReward = REWARD_PERCENTAGE * sumOfAllTransactions;
+        const status =
+          totalReward === accumulatedReward
+            ? REWARD_STATUS.REWARDED
+            : REWARD_STATUS.ACCUMULATING;
+        const referral = referralExists[0];
+
+        // set first property assigned to the referral
+        if (!referral.assignedProperty) {
+          await strapi.entityService.update(
+            "api::referral.referral",
+            referral?.id,
+            {
+              data: {
+                totalReward,
+                accumulatedReward,
+                status,
+                assignedProperty: assignedProperty.id,
+              },
+            }
+          );
+        }
+
+        // update existing property
+        if (
+          referral.assignedProperty &&
+          referral.assignedProperty.id === assignedProperty.id
+        ) {
+          await strapi.entityService.update(
+            "api::referral.referral",
+            referral?.id,
+            {
+              data: {
+                totalReward,
+                accumulatedReward,
+                status,
+              },
+            }
+          );
+        }
       }
     }
 

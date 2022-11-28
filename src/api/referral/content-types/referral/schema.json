@@ -41,6 +41,18 @@
     "accumulatedReward": {
       "type": "biginteger",
       "default": "0"
+    },
+    "referralPercentage": {
+      "type": "float",
+      "default": 2.5,
+      "max": 5,
+      "min": 1
+    },
+    "assignedProperty": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::assigned-property.assigned-property",
+      "inversedBy": "referrals"
     }
   }
 }

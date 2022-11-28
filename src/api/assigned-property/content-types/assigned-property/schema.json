@@ -80,6 +80,12 @@
     "totalAmountPaid": {
       "type": "biginteger",
       "default": "0"
+    },
+    "referrals": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::referral.referral",
+      "mappedBy": "assignedProperty"
     }
   }
 }
