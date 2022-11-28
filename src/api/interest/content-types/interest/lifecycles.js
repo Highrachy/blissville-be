@@ -8,7 +8,6 @@ const { v4: uuidv4 } = require("uuid");
 
 module.exports = {
   async afterUpdate({ result }) {
-    let isNewUser = false;
     const randomText = uuidv4();
     const resetPasswordToken = randomText.slice(0, -6);
     const password = randomText.slice(-8);
@@ -62,7 +61,6 @@ module.exports = {
           }
         );
         currentUser = newUser;
-        isNewUser = true;
       }
 
       const propertyAlreadyAssigned = await strapi.entityService.findMany(
@@ -101,7 +99,7 @@ module.exports = {
           currentUser?.referredBy?.id ||
           currentUser?.referredBy;
 
-        if (referredBy && isNewUser) {
+        if (referredBy) {
           const referredByUser = await strapi.entityService.findOne(
             "plugin::users-permissions.user",
             referredBy
