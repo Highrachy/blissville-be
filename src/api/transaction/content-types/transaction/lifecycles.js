@@ -56,7 +56,7 @@ const calculateExpectedTotal = (amountPaid, paymentSchedules) => {
     (result, schedule) => {
       const scheduleHasExpired =
         subDays(schedule.date, frequency) <= todaysDate;
-      const userHasPaidForPastSchedule = amountPaid + 1 >= result.expectedTotal; // added +1 to account decimal numbers
+      const userHasPaidForPastSchedule = amountPaid >= result.expectedTotal;
 
       if (scheduleHasExpired || userHasPaidForPastSchedule) {
         const expectedTotal = result.expectedTotal + schedule.amount;
@@ -210,7 +210,7 @@ module.exports = {
                 totalReward,
                 accumulatedReward,
                 status,
-                assignedProperty: assignedProperty.id,
+                assignedProperty: assignedProperty?.id,
               },
             }
           );
@@ -218,8 +218,8 @@ module.exports = {
 
         // update existing property
         if (
-          referral.assignedProperty &&
-          referral.assignedProperty.id === assignedProperty.id
+          referral?.assignedProperty &&
+          referral?.assignedProperty.id === assignedProperty?.id
         ) {
           await strapi.entityService.update(
             "api::referral.referral",
